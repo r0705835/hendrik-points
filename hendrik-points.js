@@ -14,35 +14,29 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    if(msg.content === "hleaderboard")
-    {
-        msgDestination(msg);
-    }
-    else if(msg.author.id in authors) {
-        msgDestination(msg);
-    }
+    processRequest(msg);
 });
 
-
-function msgDestination(msg) {
-  if (msg.content.charAt(0) === "h") {
-
-      switch (msg.content.charAt(1)) {
-          case "+":
-              addScore(msg);
-              saveData();
-              break;
-          case "-":
-              subtractScore(msg)
-              saveData();
-              break;     
-          case "l":
-              showLeaderboard(msg);
-              break;
-            
-          default:
-              break;
-      } 
+function processRequest(msg)
+{
+    if(msg.content.charAt(0) === "h")
+    {
+        if(msg.content === "hleaderboard")
+        {
+            showLeaderboard(msg);
+        }
+        else if(msg.author.id in authors) {
+            if(msg.content.charAt(1) === "+")
+            {
+                addScore(msg);
+                saveData();
+            }
+            else if(msg.content.charAt(1) === "-")
+            {
+                subtractScore(msg);
+                saveData();
+            }
+        }
     }
 }
 
