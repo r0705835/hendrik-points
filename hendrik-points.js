@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const fsLibrary = require('fs');
+const { cpuUsage } = require('process');
 const jsonConverter = require('./json-converter');
 const client = new Discord.Client();
 const scores = {};
@@ -21,55 +22,53 @@ function processRequest(msg)
 {
     if(msg.content.charAt(0) === "h")
     {
+        console.log(msg.author.id);
+        console.log(authors);
+        console.log(authors.includes(msg.author.id));
         if(msg.content === "hleaderboard")
         {
             showLeaderboard(msg);
         }
-        else if(msg.author.id in authors) {
-            if(msg.content.charAt(1) === "+")
+        else if(authors.includes(msg.author.id)) {
+            var command = extractCommand(msg);
+            var playerKey = extractComponents(msg)[0];
+            var playerValue = extractComponents(msg)[1];
+            if(command === "+")
             {
-                addScore(msg);
+                addScore(playerKey, playerValue);
                 saveData();
+                msg.reply("Score added");
             }
-            else if(msg.content.charAt(1) === "-")
+            else if(command === "-")
             {
-                subtractScore(msg);
+                addScore(playerKey, -playerValue);
                 saveData();
+                msg.reply("Score subtracted");
             }
         }
     }
 }
 
-function addScore(msg) {
-    var temp = msg.content.slice(2,msg.content.length);
-    var temp2 = temp.split(" ");
-    var lower = temp2[0].toLowerCase();
-    var playerKey = lower.charAt(0).toUpperCase() + lower.slice(1);
-    var playerValue = temp2[1];
+function extractCommand(msg) {
+    return msg.content.charAt(1);
+}
+
+function extractComponents(msg) {
+    var msgWithoutCommand = msg.content.slice(2,msg.content.length);
+    var msgSplit = msgWithoutCommand.trim().split(" ");
+    var playerKey = msgSplit.slice(1, msgSplit.length).join(" ");
+    console.log(playerKey);
+    var lowercasePlayerKey = playerKey.toLowerCase();
+    return [lowercasePlayerKey.charAt(0).toUpperCase() + lowercasePlayerKey.slice(1), Number(msgWithoutCommand[0])];
+}
+
+function addScore(playerKey, playerValue) {    
     if (playerKey in scores) {
         scores[playerKey] += Number(playerValue);
     }
-
     else {
         scores[playerKey] =  Number(playerValue);
     }
-    msg.reply('Score changed');
-}
-
-function subtractScore(msg) {
-    var temp = msg.content.slice(2,msg.content.length);
-    var temp2 = temp.split(" ");
-    var playerKey = temp2[0].toLowerCase().charAt(0).toUpperCase() + temp2[0].slice(1);
-    var playerValue = temp2[1];
-    if (playerKey in scores) {
-        scores[playerKey] -= Number(playerValue);
-    }
-
-    else {
-        scores[playerKey] = -Number(playerValue);
-    }
-    msg.reply('Score subtracted');
-
 }
 
 function showLeaderboard(msg) {
