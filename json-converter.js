@@ -6,7 +6,6 @@ function loadJSON(filePath) {
   {
     // Load json file;
     var json = fsLibrary.readFileSync(filePath);
-    console.log(JSON.parse(json));
     // Parse json
     return JSON.parse(json);
   }  
@@ -14,7 +13,6 @@ function loadJSON(filePath) {
 
 function saveJSON(filePath, cummies) {
   var data = JSON.stringify(cummies);
-  console.log(data);
   fsLibrary.writeFileSync(filePath, data);
 }
 

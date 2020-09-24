@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const jsonConverter = require('./json-converter.js');
 const client = new Discord.Client();
 var scores = {};
+var quotes = "bra";
 const filePath = "data/hendrik-scores.txt"
 var bots = jsonConverter.loadJSON("bots.json");
 var authors = jsonConverter.loadJSON("authors.json");
@@ -11,7 +12,6 @@ client.login(bots[0]);
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
   var test = jsonConverter.loadJSON(filePath);
-  console.log(test);
   scores = test;
 });
 
@@ -34,12 +34,12 @@ function processRequest(msg)
             if(command === "+")
             {
                 modifyScore(playerKey, playerValue);
-                msg.reply("Score added");
+                reply(msg, "Score added", quotes);
             }
             else if(command === "-")
             {
                 modifyScore(playerKey, -playerValue);
-                msg.reply("Score subtracted");
+                reply(msg, "Score subtracted", quotes);
             }
         }
     }
@@ -55,6 +55,10 @@ function extractComponents(msg) {
     var playerKey = msgSplit.slice(1, msgSplit.length).join(" ");
     var lowercasePlayerKey = playerKey.toLowerCase();
     return [lowercasePlayerKey.charAt(0).toUpperCase() + lowercasePlayerKey.slice(1), Number(msgSplit[0])];
+}
+
+function reply(msg, original, quote) {
+    msg.reply(original);
 }
 
 function modifyScore(playerKey, playerValue) {    
