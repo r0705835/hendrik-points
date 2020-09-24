@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const jsonConverter = require('./json-converter.js');
 const client = new Discord.Client();
 var scores = {};
-var quotes = "bra";
+var quotes = jsonConverter.loadJSON("secret.json");
 const filePath = "data/hendrik-scores.txt"
 var bots = jsonConverter.loadJSON("bots.json");
 var authors = jsonConverter.loadJSON("authors.json");
@@ -57,7 +57,17 @@ function extractComponents(msg) {
     return [lowercasePlayerKey.charAt(0).toUpperCase() + lowercasePlayerKey.slice(1), Number(msgSplit[0])];
 }
 
-function reply(msg, original, quote) {
+function reply(msg, original, quotes) {
+    console.log(quotes);
+    var percentage = Math.floor((Math.random() * 10) + 1);
+    if(percentage <= 2) {
+        var item = quotes[Math.floor(Math.random() * quotes.length)];
+        msg.reply(item)
+        .then(msg => {
+            msg.delete({ timeout: 10000 })
+        })
+        .catch(console.error);
+    }
     msg.reply(original);
 }
 
