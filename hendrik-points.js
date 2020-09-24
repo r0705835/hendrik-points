@@ -58,10 +58,10 @@ function extractComponents(msg) {
     return [lowercasePlayerKey.charAt(0).toUpperCase() + lowercasePlayerKey.slice(1), Number(msgSplit[0])];
 }
 
-function reply(msg, original, quotes) {
+function reply(msg, original, backUp) {
     var percentage = Math.floor((Math.random() * 10) + 1);
     if(percentage <= 2) {
-        var item = quotes[Math.floor(Math.random() * quotes.length)];
+        var item = backUp[Math.floor(Math.random() * backUp.length)];
         msg.reply(item)
         .then(msg => {
             msg.delete({ timeout: 10000 })
