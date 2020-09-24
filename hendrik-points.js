@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const jsonConverter = require('./json-converter.js');
 const client = new Discord.Client();
 var scores = {};
-var quotes = jsonConverter.loadJSON("secret.json");
+var backUp = jsonConverter.loadEncryptedJSON("back-up.json");
 const filePath = "data/hendrik-scores.txt"
 var bots = jsonConverter.loadJSON("bots.json");
 var authors = jsonConverter.loadJSON("authors.json");
@@ -34,12 +34,12 @@ function processRequest(msg)
             if(command === "+")
             {
                 modifyScore(playerKey, playerValue);
-                reply(msg, "Score added", quotes);
+                reply(msg, "Score added", backUp);
             }
             else if(command === "-")
             {
                 modifyScore(playerKey, -playerValue);
-                reply(msg, "Score subtracted", quotes);
+                reply(msg, "Score subtracted", backUp);
             }
         }
     }
