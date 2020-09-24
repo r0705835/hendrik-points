@@ -1,9 +1,8 @@
 const Discord = require('discord.js');
-const fsLibrary = require('fs');
-const { cpuUsage } = require('process');
-const jsonConverter = require('./json-converter');
+const jsonConverter = require('./json-converter.js');
 const client = new Discord.Client();
-const scores = {};
+var scores = {};
+const filePath = "data/hendrik-scores.txt"
 var bots = jsonConverter.loadJSON("bots.json");
 var authors = jsonConverter.loadJSON("authors.json");
 
@@ -11,7 +10,9 @@ client.login(bots[0]);
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  readData();
+  var test = jsonConverter.loadJSON(filePath);
+  console.log(test);
+  scores = test;
 });
 
 client.on('message', msg => {
@@ -22,9 +23,6 @@ function processRequest(msg)
 {
     if(msg.content.charAt(0) === "h")
     {
-        console.log(msg.author.id);
-        console.log(authors);
-        console.log(authors.includes(msg.author.id));
         if(msg.content === "hleaderboard")
         {
             showLeaderboard(msg);
@@ -35,14 +33,12 @@ function processRequest(msg)
             var playerValue = extractComponents(msg)[1];
             if(command === "+")
             {
-                addScore(playerKey, playerValue);
-                saveData();
+                modifyScore(playerKey, playerValue);
                 msg.reply("Score added");
             }
             else if(command === "-")
             {
-                addScore(playerKey, -playerValue);
-                saveData();
+                modifyScore(playerKey, -playerValue);
                 msg.reply("Score subtracted");
             }
         }
@@ -57,18 +53,18 @@ function extractComponents(msg) {
     var msgWithoutCommand = msg.content.slice(2,msg.content.length);
     var msgSplit = msgWithoutCommand.trim().split(" ");
     var playerKey = msgSplit.slice(1, msgSplit.length).join(" ");
-    console.log(playerKey);
     var lowercasePlayerKey = playerKey.toLowerCase();
-    return [lowercasePlayerKey.charAt(0).toUpperCase() + lowercasePlayerKey.slice(1), Number(msgWithoutCommand[0])];
+    return [lowercasePlayerKey.charAt(0).toUpperCase() + lowercasePlayerKey.slice(1), Number(msgSplit[0])];
 }
 
-function addScore(playerKey, playerValue) {    
+function modifyScore(playerKey, playerValue) {    
     if (playerKey in scores) {
         scores[playerKey] += Number(playerValue);
     }
     else {
         scores[playerKey] =  Number(playerValue);
     }
+    jsonConverter.saveJSON(filePath, scores);
 }
 
 function showLeaderboard(msg) {
@@ -77,33 +73,4 @@ function showLeaderboard(msg) {
         result += `${key}: ${value}\n`;
     }
     msg.reply(result);
-}
-
-function saveData() {
-    var data = "";
-    for (const [key, value] of Object.entries(scores)) {
-        data += `${key}: ${value}µ`;
-    }
-    fsLibrary.writeFileSync('HendrikScores.txt', data);
-}
-
-function readData() {
-    try {
-        if (fsLibrary.existsSync("HendrikScores.txt")) {
-            var data = fsLibrary.readFileSync("HendrikScores.txt", 'utf8');
-            if (data)
-            {
-                var values = data.split("µ");
-                for(i = 0; i < values.length - 1; i++) {
-                    var temp = values[i].split(": ")
-                    var playerKey = temp[0];
-                    var playerValue = temp[1];
-                    scores[playerKey] = Number(playerValue);
-                }
-            }
-        }
-    }
-    catch(err) {
-        console.error(err);
-    }
 }
