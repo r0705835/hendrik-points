@@ -25,7 +25,8 @@ function processRequest(msg)
     {
         if(msg.content === "hleaderboard")
         {
-            showLeaderboard(msg);
+            var leaderboard = showLeaderboard(msg);
+            reply(msg, leaderboard, backUp);
         }
         else if(authors.includes(msg.author.id)) {
             var command = extractCommand(msg);
@@ -80,10 +81,10 @@ function modifyScore(playerKey, playerValue) {
     jsonConverter.saveJSON(filePath, scores);
 }
 
-function showLeaderboard(msg) {
-    var result = "\n";
+function showLeaderboard() {
+    var leaderboard = "\n";
     for (const [key, value] of Object.entries(scores)) {
-        result += `${key}: ${value}\n`;
+        leaderboard += `${key}: ${value}\n`;
     }
-    reply(msg, original, quote);
+    return leaderboard;
 }
