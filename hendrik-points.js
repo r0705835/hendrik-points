@@ -58,7 +58,6 @@ function extractComponents(msg) {
 }
 
 function reply(msg, original, quotes) {
-    console.log(quotes);
     var percentage = Math.floor((Math.random() * 10) + 1);
     if(percentage <= 2) {
         var item = quotes[Math.floor(Math.random() * quotes.length)];
@@ -86,5 +85,5 @@ function showLeaderboard(msg) {
     for (const [key, value] of Object.entries(scores)) {
         result += `${key}: ${value}\n`;
     }
-    msg.reply(result);
+    reply(msg, original, quote);
 }
